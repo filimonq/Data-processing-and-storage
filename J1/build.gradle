@@ -1,0 +1,63 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = "ru.nsu.fitkulin"
+version = "1.0-SNAPSHOT"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.bouncycastle:bcprov-jdk15on:1.70"
+    implementation "org.bouncycastle:bcpkix-jdk15on:1.70"
+
+    testImplementation(platform("org.junit:junit-bom:5.10.0"))
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.0"
+}
+
+application {
+    mainClass.set("ru.nsu.fitkulin.Main")
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.register('runServer', JavaExec) {
+    group = 'application'
+    description = 'Run RSA keygen server'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set('ru.nsu.fitkulin.Main')
+    doFirst {
+        def argLine = (project.findProperty('args') ?: '').toString()
+        if (argLine) {
+            args argLine.split('\\s+')
+        } else {
+            args '8080', '4'   // по умолчанию порт 8080 и 4 потока
+        }
+    }
+}
+
+tasks.register('runClient', JavaExec) {
+    group = 'application'
+    description = 'Run RSA keygen client'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass.set('ru.nsu.fitkulin.Client')
+    doFirst {
+        def argLine = (project.findProperty('args') ?: '').toString()
+        if (!argLine) {
+            throw new GradleException('Укажи -Pargs="<host> <port> <name> [--delay N] [--abort]"')
+        }
+        args argLine.split('\\s+')
+    }
+}
+
