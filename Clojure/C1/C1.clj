@@ -1,4 +1,4 @@
-(ns C1 "неймспейс C1"
+(ns C1        ;неймспейс C1
   (:require [clojure.string :as str]))
 
 (defn strings-no-repeats [alphabet n]
