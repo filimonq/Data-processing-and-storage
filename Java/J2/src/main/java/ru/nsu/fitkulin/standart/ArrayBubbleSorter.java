@@ -27,7 +27,6 @@ final class ArrayBubbleSorter implements Runnable {
                 int n;
                 synchronized (list) { n = list.size(); }
                 for (int i = 0; i < Math.max(0, n - 1) && running; i++) {
-                    // задержка внутри шага — ВНЕ монитора
                     if (delayInsideMs > 0) TimeUnit.MILLISECONDS.sleep(delayInsideMs);
 
                     synchronized (list) {
